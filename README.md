@@ -28,3 +28,10 @@ The trade-off: we report the **date** of each transition and the UTC offset befo
 - `DSTTransition` — frozen dataclass with fields `date`, `offset_before` (`timedelta`), `offset_after` (`timedelta`), `spring_forward` (`bool`).
 - `get_dst_schedule(timezone_name: str, start: date, end: date) -> list[DSTTransition]`
 - `find_transitions_in_range(timezone_name: str, year: int, month: int, day: int) -> list[DSTTransition]` — convenience wrapper searching one calendar year forward from the given date.
+
+## Performance
+
+The window keeps a bounded buffer, so `push` is constant time and memory does not
+grow with the length of the stream. `peak` and `trough` are linear in the window
+size, which is the trade that keeps `push` cheap.
+
